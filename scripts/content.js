@@ -1,6 +1,6 @@
 const insert = (content) => {
   // Find Calmly editor input section
-const elements = document.getElementsByClassName('droid');
+const elements = document.getElementsByClassName('droid',"notranslate public-DraftEditor-content","Am aO9 Al editable LW-avf tS-tW,","Am Al editable LW-avf tS-tW");
 
 if (elements.length === 0) {
   return;
@@ -8,8 +8,8 @@ if (elements.length === 0) {
     const element = elements[0];
     
   // Grab the first p tag so we can replace it with our injection
-const pToRemove = element.childNodes[0];
-    pToRemove.remove();
+//const pToRemove = element.childNodes[0];
+  //  pToRemove.remove();
     
   // Split content by \n
 const splitContent = content.split('\n');
