@@ -8,6 +8,21 @@ const getKey = () => {
     });
   });
 };
+const sendMessage = (content) => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const activeTab = tabs[0].id;
+
+    chrome.tabs.sendMessage(
+      activeTab,
+      { message: 'inject', content },
+      (response) => {
+        if (response.status === 'failed') {
+          console.log('injection failed.');
+        }
+      }
+    );
+  });
+};
 
 const generate = async (prompt) => {
   // Get your API key from storage
@@ -35,16 +50,33 @@ const generate = async (prompt) => {
 }
 
 const generateCompletionAction = async (info) => {
-  try {
+    try {
+      // Send mesage with "generating text"
+    sendMessage('generating...');
     const { selectionText } = info;
     const basePromptPrefix = `
 	Write a new verse to the poem below.
     Poem: 
 	`;
-      const baseCompletion = await generate(`${basePromptPrefix}${selectionText}`);
-     console.log(baseCompletion.text)	     
+    const baseCompletion = await generate(`${basePromptPrefix}${selectionText}`);
+    const secondPrompt = `
+      Take the following poem and write a new verse.
+      
+      Verse 1: ${selectionText}
+      
+      Verse 2: ${baseCompletion.text}
+      
+      Verse 3:
+      `;
+
+    // Call our second prompt
+    const secondPromptCompletion = await generate(secondPrompt);
+
+     console.log(baseCompletion.text);
+     sendMessage(secondPromptCompletion.text);   
   } catch (error) {
-    console.log(error);
+        console.log(error);
+        sendMessage(error.toString());
   }
 };
 
